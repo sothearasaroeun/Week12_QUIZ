@@ -37,16 +37,29 @@ class _NewItemState extends State<NewItem> {
     super.dispose();
 
     // Dispose the controlers
-    _nameController.dispose();
+    _nameController.dispose();                          
     _quantityController.dispose();
   }
 
   void onReset() {
     // Will be implemented later - Reset all fields to the initial values
+    _nameController.text = defautName;
+    _quantityController.text = defaultQuantity.toString();
+     _selectedCategory = defaultCategory;
   }
 
   void onAdd() {
     // Will be implemented later - Create and return the new grocery
+    final name = _nameController.text;
+    final qty = int.tryParse(_quantityController.text)!;
+    final newGrocery = Grocery(
+      id: DateTime.now().toString(), 
+      name: name, 
+      quantity: qty, 
+      category: _selectedCategory,
+      );
+
+      Navigator.pop<Grocery>(context, newGrocery);
   }
 
   @override
@@ -73,10 +86,25 @@ class _NewItemState extends State<NewItem> {
                   ),
                 ),
                 const SizedBox(width: 8),
+
                 Expanded(
                   child: DropdownButtonFormField<GroceryCategory>(
                     initialValue: _selectedCategory,
-                    items: [  ],
+                    items: [  
+                      ...GroceryCategory.values.map((category) => DropdownMenuItem(
+                        value: category,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 15,
+                              height: 15,
+                              color: category.color,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(category.name),
+                          ],
+                        ))),
+                    ],
                     onChanged: (value) {
                       if (value != null) {
                         setState(() {
@@ -89,6 +117,7 @@ class _NewItemState extends State<NewItem> {
               ],
             ),
             const SizedBox(height: 12),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
